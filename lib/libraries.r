@@ -11,6 +11,7 @@ library(XML)
 library(raster)
 library(gridExtra)
 library(caret)
+library(scales)
 
 
 options(gsubfn.engine="R")

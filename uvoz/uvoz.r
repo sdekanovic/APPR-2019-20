@@ -16,7 +16,7 @@ spremeniDecimalke <- function(stevilo){
 # spremenimo iz 12.34 v 1234
 spremeniZapis <- function(stevilo) {
   M <- unlist(strsplit(as.character(stevilo), ""))
-  M <- M[!grepl("\\.", M)]
+  M <- M[!grepl("\\,", M)]
   return(as.numeric(paste(M, collapse = "")))
 }
 
@@ -44,7 +44,7 @@ uvozi.tabela1 <- function() {
   link <- "https://en.wikipedia.org/wiki/States_of_Germany"
   stran <- html_session(link) %>% read_html()
   tabela1 <- stran %>% html_nodes(xpath="//table[@class='sortable wikitable']") %>%
-    .[[1]] %>% html_table(dec=",")
+    .[[1]] %>% html_table(dec=".")
   
   tabela1 <- tabela1[, c(3, 4, 5, 10, 11, 15)]
   imenaStolpcev <- c("Regija", "Leto", "Glavno mesto", "Povrsina", "Populacija", "GDP na prebivalca")
@@ -59,6 +59,7 @@ uvozi.tabela1 <- function() {
 
   povrsina <- lapply(tabela1$Povrsina, spremeniZapis)
   tabela1$Povrsina <- unlist(povrsina)
+  
   gdp <- lapply(tabela1$`GDP na prebivalca`, spremeniZapis)
   tabela1$`GDP na prebivalca` <- unlist(gdp)
 

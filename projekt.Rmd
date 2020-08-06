@@ -13,6 +13,7 @@ output:
 # Če želimo nastaviti pisave v PDF-ju, odkomentiramo
 # in sledimo navodilom v programu.
 #source("fontconfig.r", encoding="UTF-8")
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
 
 # Uvoz vseh potrebnih knjižnic
 source("lib/libraries.r", encoding="UTF-8")
@@ -135,10 +136,19 @@ tm_shape(map) +
   tm_layout(title = "Regije")
 ```
 
-Spodnja zemljevida prikazujeta BDP posamezne regije. Zanimalo me je še, kje je BDP skoncentriran. Na desnem zemljevidu opazimo, kot pričakovano, da imata regiji Berlin in Hamburg zaradi majhne površine in močne ekonomske razvitosti zelo velik delež BDP-ja glede na površino.
+Spodnja zemljevida prikazujeta BDP posamezne regije. Zanimalo me je še, kje je BDP skoncentriran. Na desnem zemljevidu opazimo, kot pričakovano, da imata regiji Berlin in Hamburg zaradi majhne površine in močne ekonomske razvitosti zelo velik delež BDP-ja glede na površino. 
 
 ```{r}
 tm_shape(merge(map, tabela1 %>% mutate(`GDP/area` = GDP/Povrsina), by.x = "NAME_1", by.y = "Regija")) +
+  tm_polygons(c("GDP", "GDP/area")) +
+  tm_facets(sync = TRUE, ncol = 2) + 
+  tm_text("NAME_1", size = 0.6)
+```
+
+Ker so Berlin, Hamburg in Bremen majhne regije in zaradi tega močno izstopajo od ostalih, sem si pogledal zemljevid z istimi podatki vendar brez teh treh regij. Rezultat je podoben kot na levem zemljevidu, ki prikazuje samo BDP regije. 
+
+```{r}
+tm_shape(merge(map, tabela1 %>% mutate(`GDP/area` = GDP/Povrsina) %>% filter(!Regija %in% c("Berlin", "Hamburg", "Bremen")), by.x = "NAME_1", by.y = "Regija")) +
   tm_polygons(c("GDP", "GDP/area")) +
   tm_facets(sync = TRUE, ncol = 2) + 
   tm_text("NAME_1", size = 0.6)
@@ -153,7 +163,7 @@ tm_shape(merge(map, tabela1 %>% mutate(`Pop/area` = Populacija/Povrsina), by.x =
   tm_text("NAME_1", size = 0.6)
 ```
 
-Manjše regije sem združil skupaj z večjimi, ki prve vsebujejo. Take manjše regije so Berlin, Hamburg in Bremen. Tako sem dobil drugačne rezultate. Regija z največjo gostoto je sedaj Mecklenburg-Vorpommern.
+Tukaj sem pa manjše regije Berlin, Hamburg in Bremen združil skupaj z večjimi, ki prve vsebujejo. Tako sem dobil drugačne rezultate. Regija z največjo gostoto je tudi regija z največjo populacijo, North Rhine-Westphalia.
 
 ```{r}
 tm_shape(merge(map, blend, by.x = "NAME_1", by.y = "Regija")) +
@@ -202,11 +212,11 @@ Pogledal sem si še, kakšna je povezava med namenom kredita in njegovo velikost
 
 ```{r}
 ggplot(tabela2) +
-  geom_boxplot(aes(x = Namen, y = `Velikost kredita`, fill = Ocena)) +
-  theme(text = element_text(size = 9))
+  geom_boxplot(aes(x = Namen, y = `Velikost kredita`, fill = Ocena), position = "dodge") +
+  theme(text = element_text(size = 9)) + scale_x_discrete(guide = guide_axis(n.dodge = 2))
 
 
-tabela2 %>% group_by(Namen, Ocena) %>% summarise(n())
+tabela2 %>% group_by(Namen, Ocena) %>% summarise(`Število` = n()) %>% kable()
 ```
 
 
