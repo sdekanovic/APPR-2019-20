@@ -27,8 +27,7 @@ blend$`Pop/area`[8] <- (blend$Populacija[5] + blend$Populacija[8])/(blend$Povrsi
 # Vizualizacije tabele 3
 
 p1 <- ggplot(tabela2, aes(x = Namen, fill = Ocena)) +
-  geom_bar() + theme(text = element_text(size = 9)) +
-  ylab("Število") + scale_x_discrete(guide = guide_axis(n.dodge = 2))
+  geom_bar() + ylab("Število") + scale_x_discrete(guide = guide_axis(n.dodge = 2))
 
 p2 <- ggplot(tabela2, aes(x = Zaposlitev, fill = Ocena)) +
   geom_bar() +
