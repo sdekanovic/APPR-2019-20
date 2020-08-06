@@ -26,12 +26,16 @@ blend$`Pop/area`[8] <- (blend$Populacija[5] + blend$Populacija[8])/(blend$Povrsi
 
 # Vizualizacije tabele 3
 
-p1 <- ggplot(tabela2, aes(x = Namen, fill = Ocena)) +
-  geom_bar() + ylab("Število") + scale_x_discrete(guide = guide_axis(n.dodge = 2))
+reorder2 <- tabela2
+reorder2$Namen <- factor(reorder2$Namen,
+                         levels = c("posel", "gospodinjski aparati", "avto", "potovanje/drugo", "radio/TV",
+                                    "pohištvo/oprema", "izobrazba", "popravila"))
+
+p1 <- ggplot(reorder2, aes(x = Namen, fill = Ocena)) +
+  geom_bar() + ylab("Število") + theme(axis.text = element_text(size = 7))
 
 p2 <- ggplot(tabela2, aes(x = Zaposlitev, fill = Ocena)) +
-  geom_bar() +
-  ylab("Število")
+  geom_bar() + ylab("Število")
 
 p3 <- ggplot(tabela2, aes(x = `Velikost kredita`)) +
   geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.8) +
