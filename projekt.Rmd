@@ -208,16 +208,20 @@ ggplot(tabela2 %>% filter(!is.na(Prihranki))) +
   geom_jitter(aes(x = Prihranki, y = Nastanitev, shape = Ocena, color = Ocena))
 ```
 
-Pogledal sem si še, kakšna je povezava med namenom kredita in njegovo velikostjo. Večje odstopanje pride pri kreditih z namenom "potovanja in drugo", kjer so večji krediti ocenjeni s slabo oceno, manjši pa z dobro. Sicer je pa posameznikov s takim namenom zelo malo: 7 za dobro oceno in 5 za slabo.
+Pogledal sem si še, kakšna je povezava med namenom kredita in njegovo velikostjo. Večje odstopanje pride pri kreditih z namenom "potovanja in drugo", kjer so večji krediti ocenjeni s slabo oceno, manjši pa z dobro.
 
 ```{r}
 ggplot(tabela2) +
   geom_boxplot(aes(x = Namen, y = `Velikost kredita`, fill = Ocena), position = "dodge") + coord_flip()
-
-
-tabela2 %>% group_by(Namen, Ocena) %>% summarise(`Število` = n()) %>% kable()
 ```
 
+Sicer je pa posameznikov s takim namenom zelo malo: 7 za dobro oceno in 5 za slabo.
+
+```{r}
+tabela3 <- tabela2 %>% group_by(Namen, Ocena) %>% summarise(`Število` = n())
+kable(list(tabela3[1:8, ], tabela3[9:16, ])) %>% 
+  kable_styling(full_width = F)
+```
 
 
 ***
@@ -231,7 +235,19 @@ source("analiza/analiza.r", encoding="UTF-8")
 Za konec sem se odločil, da naredim napovedni model iz danih podatkov. Ker je naša ciljna spremenljivka "Ocena" kategorična, bom uporabil logistično regresijo. 
 Najprej sem odstranil vse vrstice, kjer kakšni podatki manjkajo. To se zgodi pri stolpcu "Prihranki". Logistična regresija potrebuje številsko spremenljivko, zato sem vrednost "dober" spremenil v 1 in "slab" v 0. 
 
-S tem se sedaj lahko uporabi model logistične regresije. Podatke sem razdelil na učne podatke in testne podatke v razmerju 4:1. Na učnih podatkih sem najprej natreniral model in s pomočjo p-vrednosti pogledal katere spremenljivke so statistično značilne. Na testnih podatkih sem naredil napoved in izračunal natančnost modela.
+S tem se sedaj lahko uporabi model logistične regresije. Podatke sem razdelil na učne podatke in testne podatke v razmerju 4:1. Na učnih podatkih sem najprej natreniral model in s pomočjo p-vrednosti pogledal katere spremenljivke so statistično značilne. 
+
+```{r}
+kable(list(df2[1:10, c(1, 4)], df2[11:20, c(1, 4)]), 
+      caption = "Koeficienti modela in p-vrednosti", 
+      digits = 2) %>% 
+  kable_styling(bootstrap_options = c("striped"), fixed_thead = T, full_width = F)
+statSignificence %>% as.data.frame %>% kable(col.names = "Statistično značilne spremenljivke") %>% 
+  kable_styling(bootstrap_options = c("striped"), full_width = F)
+```
+
+
+Na testnih podatkih sem naredil napoved in izračunal natančnost modela.
 
 ```{r}
 print(sprintf("Točnost logistične regresije: %.2f",

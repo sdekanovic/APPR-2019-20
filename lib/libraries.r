@@ -12,6 +12,7 @@ library(raster)
 library(gridExtra)
 library(caret)
 library(scales)
+library(kableExtra)
 
 
 options(gsubfn.engine="R")

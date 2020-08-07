@@ -19,11 +19,13 @@ ucna <- df[indeksi, ]
 testna <- df[-indeksi, ]
 
 model1 <- glm(formula = Ocena ~ . - ID, family = binomial(link = logit), data = ucna)
-coef(summary(model1))[, 4] < 0.05
+#coef(summary(model1))[, 4] < 0.05
 
 # statistično značilne spremenljivke
 statSignificence <- as.logical(coef(summary(model1))[, 4] < 0.05)
 statSignificence <- names(model1$coefficients[statSignificence])
+
+df2 <- as.data.frame(coef(summary(model1)))
 
 napoved <- model1 %>% predict(testna, type = "response")
 napoved[napoved > 0.5] = 1
