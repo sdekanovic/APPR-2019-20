@@ -246,12 +246,10 @@ statSignificence %>% as.data.frame %>% kable(col.names = "Statistično značilne
   kable_styling(bootstrap_options = c("striped"), full_width = F)
 ```
 
-
 Na testnih podatkih sem naredil napoved in izračunal natančnost modela.
 
 ```{r}
-print(sprintf("Točnost logistične regresije: %.2f",
-              tocnost))
+tocnost %>% kable(digits = 2, col.names = c("Točnost logistične regresije")) %>% kable_styling(full_width = F)
 ```
 
 
